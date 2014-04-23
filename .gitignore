@@ -2,4 +2,5 @@ jquery
 calculator.js
 database.db
 config/config_template.yml
+config/config_templatett.yml
 .sass-cache
