@@ -1,5 +1,6 @@
 require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
+require 'omniauth-twitter'
 
 use OmniAuth::Builder do
   config = YAML.load_file 'config/config_template.yml'
