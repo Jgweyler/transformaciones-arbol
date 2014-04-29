@@ -37,7 +37,7 @@ block
 		     constants: $1,
              vars: $2,
              procs: $3, 
-		     statement: $4 
+		     sts: $4 
             };
 	}
     ;
@@ -211,7 +211,11 @@ CONDITION
 
 expression
     : ID '=' expression
-        { symbol_table[$1] = $$ = $3; }
+         {$$ = { type: '=',
+                 left: { type: 'ID', value: $1 },
+                 right: $3 
+               }; 
+         }
     | expression '+' expression
         {$$ = {
                 type: '+',

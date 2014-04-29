@@ -94,7 +94,7 @@ case 2:
 		     constants: $$[$0-3],
              vars: $$[$0-2],
              procs: $$[$0-1], 
-		     statement: $$[$0] 
+		     sts: $$[$0] 
             };
 	
 break;
@@ -226,7 +226,11 @@ case 26:
             };
         
 break;
-case 27: symbol_table[$$[$0-2]] = this.$ = $$[$0]; 
+case 27:this.$ = { type: '=',
+                 left: { type: 'ID', value: $$[$0-2] },
+                 right: $$[$0] 
+               }; 
+         
 break;
 case 28:this.$ = {
                 type: '+',
@@ -786,7 +790,7 @@ case 6:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+|#.*)/,/^(?:\b\d+(\.\d*)?([eE][-+]?\d+)?\b)/,/^(?:\b[A-Za-z_]\w*\b)/,/^(?:[<>=!][=]|[<>#])/,/^(?:[-*/+^!%=();])/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s+|#.*)/,/^(?:\b\d+(\.\d*)?([eE][-+]?\d+)?\b)/,/^(?:\b[A-Za-z_]\w*\b)/,/^(?:[<>=!][=]|[<>#])/,/^(?:[-*/+()=;,.])/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
 };
 return lexer;

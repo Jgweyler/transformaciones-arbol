@@ -25,6 +25,6 @@ function idORrw(x) {
 \b\d+("."\d*)?([eE][-+]?\d+)?\b  return 'NUMBER'
 \b[A-Za-z_]\w*\b                 return idORrw(yytext)
 [<>=!][=]|[<>#]	                 return 'COMPARISON'
-[-*/+^!%=();]                    return yytext;
+[-*/+()=;,.]                     return yytext;
 <<EOF>>                          return 'EOF'
 .                                return 'INVALID'
