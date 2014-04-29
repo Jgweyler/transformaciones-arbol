@@ -25,9 +25,9 @@ PROG
     : BLOCK "." EOF
         { 
           $$ = {type: 'program',
-		        block: $1, 
-          	    return $$;
+		        block: $1 
                };
+          return $$;
         }
     ;
 

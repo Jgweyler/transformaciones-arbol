@@ -84,9 +84,9 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1: 
           this.$ = {type: 'program',
-		        block: $$[$0-2], 
-          	    return this.$;
+		        block: $$[$0-2] 
                };
+          return this.$;
         
 break;
 case 2: 
