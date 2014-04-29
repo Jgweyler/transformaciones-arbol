@@ -90,8 +90,10 @@ case 1:
         
 break;
 case 2: 
-	    this.$ = {type: 'program', 
-		     procedures: $$[$0-1], 
+	    this.$ = {type: 'block', 
+		     constants: $$[$0-3],
+             vars: $$[$0-2],
+             procs: $$[$0-1], 
 		     statement: $$[$0] 
             };
 	

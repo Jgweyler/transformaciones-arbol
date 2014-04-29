@@ -5,7 +5,7 @@ var symbol_table = {};
 
 %}
 
-%token NUMBER ID E PI ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
+%token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
 /* operator associations and precedence */
 
 %right THEN ELSE
@@ -33,8 +33,10 @@ prog
 block
     : constants variables procedures statement
 	{ 
-	    $$ = {type: 'program', 
-		     procedures: $3, 
+	    $$ = {type: 'block', 
+		     constants: $1,
+             vars: $2,
+             procs: $3, 
 		     statement: $4 
             };
 	}
