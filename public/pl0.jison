@@ -27,7 +27,7 @@ PROG
           $$ = {type: 'program',
 		        block: $1, 
           	    return $$;
-               }
+               };
         }
     ;
 
