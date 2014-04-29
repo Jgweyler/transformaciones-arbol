@@ -17,12 +17,12 @@ var symbol_table = {};
 %left UMINUS
 
 
-%start PROG
+%start prog
 
 %% /* language grammar */
 
-PROG
-    : BLOCK "." EOF
+prog
+    : block '.' EOF
         { 
           $$ = {type: 'program',
 		        block: $1 
@@ -31,8 +31,8 @@ PROG
         }
     ;
 
-BLOCK
-    : CONST VAR PROCEDURE STATEMENT
+block
+    : constants variables procedures statement
 	{ 
 	    $$ = {type: 'program', 
 		     procedures: $3, 
@@ -41,12 +41,12 @@ BLOCK
 	}
     ;
 
-CONST
+constants
     :/* empty */
-    |"const" ID "=" NUMBER ANOTHERIDCONST ";"
+    |CONST ID '=' NUMBER anotheridconst ';'
         {
             $$ =[{
-                type: "constant",
+                type: 'constant',
                 right: $4,
                 left: $2
             }];
@@ -54,9 +54,9 @@ CONST
         }
     ;
 
-ANOTHERIDCONST
+anotheridconst
     : /* empty */
-    |"," ID "=" NUMBER ANOTHERIDCONST
+    |',' ID '=' NUMBER anotheridconst
         {$$ =[{
                 type: 'constant',
                 right: $4,
@@ -66,21 +66,21 @@ ANOTHERIDCONST
         }
     ;
 
-VAR 
+variables 
     :/*empty*/
-    |"var" ID ANOTHERIDVAR ";"
+    |VAR ID anotheridvar ';'
         {
             $$ =[{
-                type: "var",
+                type: 'var',
                 right: $2
             }];
             if($3) $$.concat($3);
         }
     ;
 
-ANOTHERIDVAR
+anotheridvar
     : /*empty*/
-    |"," ID ANOTHERIDVAR ";"
+    |',' ID anotheridvar ';'
         {
 	         $$ =[{
                 type: 'var',
@@ -90,9 +90,9 @@ ANOTHERIDVAR
         }
     ;
 
-PROCEDURE
+procedures
     :
-    |"procedure" ID PARAMETERS ';' BLOCK ';' PROCEDURE
+    |PROCEDURE ID parameters ';' block ';' procedures
         {
             $$ = [{ type: 'procedure', 
 	    	    id: $2,
@@ -104,86 +104,86 @@ PROCEDURE
     ;
 
 
-STATEMENT
-    : ID "=" expression
+statement
+    : ID '=' expression
         {
             $$ = {
-                type: "=",
+                type: '=',
                 right: $3,
                 left: {type: 'ID', value: $1}
             };
         }
-    | CALL ID PARAMETERS
+    | CALL ID parameters
         {
             $$ = { 
-                type: "call",
+                type: 'call',
                 id: $2,
                 arguments: $3
             };
         }
-    | BEGIN STATEMENT ANOTHERSTATEMENT END
+    | BEGIN statement anotherstatement END
         {
             var stat = [$2];
             if($3) stat.concat($3);
             $$ = {
-                type: "begin",
+                type: 'begin',
                 statements: stat
             };
         }
-    | IF CONDITION THEN STATEMENT
+    | IF condition THEN statement
         {
             $$ = {
-                type: "ifthen",
+                type: 'ifthen',
                 condition: $2,
                 statement: $4
             };
         }
-    | IF CONDITION THEN STATEMENT ELSE STATEMENT
+    | IF condition THEN statement ELSE statement
         {
             $$ = {
-                type: "ifelse",
+                type: 'ifelse',
                 condition: $2,
                 statement_true: $4,
                 statement_false: $6
             };
         }
-    | WHILE CONDITION DO STATEMENT
+    | WHILE condition DO statement
         {
             $$ = {
-                type: "while",
+                type: 'while',
                 condition: $2,
                 statement: $4
             };
         }
     ;
 
-ANOTHERSTATEMENT
+anotherstatement
     : /*empty*/
-    | ';' STATEMENT ANOTHERSTATEMENT
+    | ';' statement anotherstatement
         {
             $$ = [$2];
             if($3) $$ = $$.concat($3);
         }
     ;
 
-PARAMETERS
+parameters
     : /*empty*/
-    | '(' ID ANOTHERPARAMETER ')'
+    | '(' ID anotherparameter ')'
         {
             $$ = [{
-                type: "parameter",
+                type: 'parameter',
                 right: $2
             }];
             if($3) $$.concat($3);
         }
     ;
 
-ANOTHERPARAMETER
+anotherparameter
     : /*empty*/
-    | "," ID ANOTHERPARAMETER
+    | ',' ID anotherparameter
         {
             $$ = [{
-                type: "parameter",
+                type: 'parameter',
                 right: $2
             }];
             if($3) $$.concat($3);
@@ -191,9 +191,10 @@ ANOTHERPARAMETER
     ;
 
 CONDITION
-    :"odd" expression
+    :ODD expression
         {
             $$ = {
+                type: 'ID',
                 exp: $2
             };
         }
@@ -212,23 +213,23 @@ expression
         { symbol_table[$1] = $$ = $3; }
     | expression '+' expression
         {$$ = {
-                type: "+",
+                type: '+',
                 left: $1,
                 right: $3
               };
         }
     | expression '-' expression
         {$$ = {
-                type: "-",
+                type: '-',
                 left: $1,
                 right: $3
               };
         }
     | expression '*' expression
         {$$ = {
-                type: "*",
-                left: "$1",
-                right: "$3"
+                type: '*',
+                left: $1,
+                right: $3
               };
         }
     | expression '/' expression
@@ -242,20 +243,20 @@ expression
           }
     | '-' e %prec UMINUS
         {$$ = {
-                type: "-",
+                type: '-',
                 right: $2
                };
         }
     | '+' e %prec UMINUS
         {$$ = {
-                type: "+",
+                type: '+',
                 right: $2
                };
         }
     | '(' e ')'
         {$$ = $2;}
     | NUMBER
-        {$$ = Number(yytext);}
+        {$$ = {type: 'NUM', value: Number(yytext)};}
     | ID 
         { $$ = {type: 'ID',
                 value: $1
