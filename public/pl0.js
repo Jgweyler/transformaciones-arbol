@@ -747,18 +747,19 @@ stateStackSize:function stateStackSize() {
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
-var reserved_words ={ PROCEDURE: 'PROCEDURE',
+var reserved_words ={ VAR: 'VAR',
+					  CONST: 'CONST',
+					  PROCEDURE: 'PROCEDURE',
 					  BEGIN: 'BEGIN',
 					  END: 'END',
-					  CALL: 'CALL',
-					  WHILE: 'WHILE',
-					  DO: 'DO',
 					  ODD: 'ODD',
-					  VAR: 'VAR',
-					  CONST: 'CONST',
+					  CALL: 'CALL',
 					  IF: 'IF',
 					  THEN: 'THEN',
-					  ELSE: 'ELSE'}
+					  ELSE: 'ELSE',
+					  WHILE: 'WHILE',
+					  DO: 'DO'}
+					 
 
 function idORrw(x) {
   return (x.toUpperCase() in reserved_words)? x.toUpperCase() : 'ID'

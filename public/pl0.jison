@@ -5,8 +5,7 @@ var symbol_table = {};
 
 %}
 
-%token ID COMPARISON NUMBER
-%token CALL BEGIN END IF THEN ELSE WHILE DO ODD EOF
+%token NUMBER ID E PI ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
 /* operator associations and precedence */
 
 %right THEN ELSE
