@@ -7,6 +7,11 @@ use OmniAuth::Builder do
   provider :google_oauth2, config['identifier'], config['secret']
 end
 
+use omniAuth::Builder do
+  config = YAML.load_file 'config/config_templatett.yml'
+  provider :twitter, config['identifier'], config['secret']
+end
+
 get '/auth/:name/callback' do
   session[:auth] = @auth = request.env['omniauth.auth']
   session[:name] = @auth['info'].name
