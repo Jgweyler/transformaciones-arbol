@@ -110,7 +110,7 @@ STATEMENT
             $$ = {
                 type: "=",
                 right: $3,
-                left: {type; 'ID', value: $1}
+                left: {type: 'ID', value: $1}
             };
         }
     | CALL ID PARAMETERS

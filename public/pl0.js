@@ -142,7 +142,7 @@ case 13:
             this.$ = {
                 type: "=",
                 right: $$[$0],
-                left: {type; 'ID', value: $$[$0-2]}
+                left: {type: 'ID', value: $$[$0-2]}
             };
         
 break;
