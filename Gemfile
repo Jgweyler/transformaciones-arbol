@@ -9,6 +9,7 @@ gem 'data_mapper'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
 gem 'sass'
+gem 'omniauth-twitter'
 
 group :development do
   gem 'dm-sqlite-adapter'
