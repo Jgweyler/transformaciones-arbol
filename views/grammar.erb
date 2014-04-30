@@ -18,42 +18,87 @@ Recuerde que una gramática $G$ es una cuaterna $G =(\Sigma,V,P,S)$.
   $V$ que se denomina símbolo de arranque.
 </ol>
 <ol>
-  <li> $\Sigma = \{ ; =, ID, PI, E, +, -, *, /, \text{^}, !, \%, (, ), NUMBER \}$, 
-  <li> $V = \{ prog, expressions, s, e \}$
+  <li> $\Sigma = \{  VAR, CONST, PROCEDURE, BEGIN, END, ODD, CALL, IF, THEN, ELSE, WHILE, DO, ;, =, ID, +, -, *, /, (, ), NUMBER, COMPARISON \}$, 
+  <li> $V = \{ prog, block, constants, anotheridconst, variables, anotheridvar, procedures, statement, anotherstatement, parameters, anotherparameter, condition, expression \}$
   <li> Productions:
   <ol>
     <li>
 <pre>
 prog
-    : expressions EOF
+    : block '.' EOF
     ;
 
-expressions
-    : s  
-    | expressions ';' s
+block
+    : constants variables procedures statement
     ;
 
-s
+constants
+    :/* empty */
+    |CONST ID '=' NUMBER anotheridconst ';'
+    ;
+
+anotheridconst
     : /* empty */
-    | e
+    |',' ID '=' NUMBER anotheridconst
     ;
 
-e
-    : ID '=' e
-    | e '+' e
-    | e '-' e
-    | e '*' e
-    | e '/' e
-    | e '^' e
-    | e '!'
-    | e '%'
-    | '-' e 
-    | '(' e ')'
-    | NUMBER
-    | E
-    | PI
-    | ID 
+variables 
+    :/*empty*/
+    |VAR ID anotheridvar ';'
     ;
+
+anotheridvar
+    : /*empty*/
+    |',' ID anotheridvar ';'
+    ;
+
+procedures
+    :/*empty*/
+    |PROCEDURE ID parameters ';' block ';' procedures
+    ;
+
+statement
+    : ID '=' expression
+    | CALL ID parameters
+    | BEGIN statement anotherstatement END
+    | IF condition THEN statement
+    | IF condition THEN statement ELSE statement
+    | WHILE condition DO statement
+    ;
+
+anotherstatement
+    : /*empty*/
+    | ';' statement anotherstatement
+    ;
+
+parameters
+    : /*empty*/
+    | '(' ID anotherparameter ')'
+    ;
+
+anotherparameter
+    : /*empty*/
+    | ',' ID anotherparameter
+    ;
+
+condition
+    :ODD expression
+    |expression COMPARISON expression
+    ;
+
+expression
+    : ID '=' expression
+    | expression '+' expression
+    | expression '-' expression
+    | expression '*' expression
+    | expression '/' expression
+    | '-' expression %prec UMINUS
+    | '+' expression %prec UMINUS
+    | '(' expression ')'
+    | NUMBER
+    | ID
+    ;
+
 </pre>
   </ol>
   <li> Start symbol: $prog$
