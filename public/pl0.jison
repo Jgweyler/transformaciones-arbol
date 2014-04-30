@@ -191,7 +191,7 @@ anotherparameter
         }
     ;
 
-CONDITION
+condition
     :ODD expression
         {
             $$ = {
@@ -239,26 +239,25 @@ expression
         }
     | expression '/' expression
         {
-          if ($3 == 0) throw new Error("Division by zero, error!");
           $$ ={
                 type: "/",
                 left: $1,
                 right: $3
               };
           }
-    | '-' e %prec UMINUS
+    | '-' expression %prec UMINUS
         {$$ = {
                 type: '-',
                 right: $2
                };
         }
-    | '+' e %prec UMINUS
+    | '+' expression %prec UMINUS
         {$$ = {
                 type: '+',
                 right: $2
                };
         }
-    | '(' e ')'
+    | '(' expression ')'
         {$$ = $2;}
     | NUMBER
         {$$ = {type: 'NUM', value: Number(yytext)};}
