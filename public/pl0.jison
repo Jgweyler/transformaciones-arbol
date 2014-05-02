@@ -5,6 +5,11 @@ var ambito = 0;
 var symbol_tables = [{ name: 'Global', father: null, symbols: {} }];
 var symbol_table = symbol_tables[ambito];
 
+function irHaciaArriba(){
+    ambito --;
+    symbol_table = symbol_tables [ambito];
+}
+
 %}
 
 %token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
