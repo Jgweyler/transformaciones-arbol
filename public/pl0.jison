@@ -29,7 +29,7 @@ function procedureDeclarado(id){
     throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
 }
 
-function buscarDaclaracion(id){
+function buscarDeclaracion(id){
     var aux;
     var a = ambito;
     do{
@@ -73,7 +73,7 @@ function IgualarConst(x) {
     var a = ambito;
     do {
       aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'PROCEDURE')
+      if(aux && aux['type'] == 'procedure')
     throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
       s--;
     } while (s >= 0 && !f);
@@ -176,31 +176,50 @@ anotheridvar
         }
     ;
 
-procedures
-    :
-    |PROCEDURE ID parameters ';' block ';' procedures
-        {
-            $$ = [{ type: 'procedure', 
-	    	    id: $2,
-	    	    arguments: $3,
-	   	        block: $5
-            }];
-	    if($7) $$ = $$.concat($7);
+procedure
+    : PROCEDURE proc_id ';' block ';'
+        { 
+          $$ = { type: $1, id: $2[0], arguments: $2[1], block: $4, symbol_table: symbol_tables.pop() };
+          irHaciaArriba();
+          $$['declared_in'] = symbol_table.name;
         }
     ;
 
+proc_id
+    : nombre parameters
+        {
+          symbol_table.symbols[$1] = { type: 'procedure', N_Args: $2.length };
+          anyadirAmbito($1);
+
+          $$ = [$1, $2];
+        }
+    ;
+    
+nombre
+    : ID
+    { $$ = $1; }
+    ;
 
 statement
     : ID '=' expression
         {
+            buscarDeclaracion($1);
+            IgualarConst($1);
+            IgualarProc($1);
+
+             if($3.type == 'id')
+             buscarDeclaracion($3.value);
+
             $$ = {
                 type: '=',
                 right: $3,
-                left: {type: 'ID', value: $1}
+                left: {type: 'ID', value: $3}
             };
         }
     | CALL ID parameters
         {
+            procedureDeclarado($2);
+            comprobarArgs($2, $3.length)
             $$ = { 
                 type: 'call',
                 id: $2,
@@ -261,7 +280,9 @@ parameters
                 right: $2
             }];
             if($3) $$.concat($3);
+            symbol_table.symbols[$2]= { type: 'parameter' };
         }
+
     ;
 
 anotherparameter
@@ -273,6 +294,7 @@ anotherparameter
                 right: $2
             }];
             if($3) $$.concat($3);
+            symbol_table.symbols[$2]= { type: 'parameter' };
         }
     ;
 
