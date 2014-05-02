@@ -10,6 +10,12 @@ function irHaciaArriba(){
     symbol_table = symbol_tables [ambito];
 }
 
+function anyadirAmbito(id){
+    ambito ++;
+    symbol_tables.push({ name: id, father: symbol_table.name, symbols: {} });
+    symbol_table = symbol_tables[ambito];
+}
+
 %}
 
 %token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
