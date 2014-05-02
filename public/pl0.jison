@@ -125,13 +125,13 @@ constants
     |CONST ID '=' NUMBER anotheridconst ';'
         {
             symbol_table.symbols[$2] = {type: 'const', value: $4};
-            $$ =[{
-                type: 'constant',
-                value: $4,
-                id: $2,
-                declared_in: symbol_table.name
-            }];
-            if($5) $$.concat($5);
+            //$$ =[{
+                //type: 'constant',
+                //value: $4,
+                //id: $2,
+                //declared_in: symbol_table.name
+            //}];
+            //if($5) $$.concat($5);
         }
     ;
 
@@ -140,13 +140,13 @@ anotheridconst
     |',' ID '=' NUMBER anotheridconst
         {
             symbol_table.symbols[$2] = {type: 'const', value: $4};
-            $$ =[{
-                type: 'constant',
-                value: $4,
-                id: $2
-                declared_in: symbol_table.name
-            }];
-            if ($5) $$.concat($5);
+            //$$ =[{
+               // type: 'constant',
+               //value: $4,
+               //id: $2
+               //declared_in: symbol_table.name
+            //}];
+            //if ($5) $$.concat($5);
         }
     ;
 
@@ -154,11 +154,12 @@ variables
     :/*empty*/
     |VAR ID anotheridvar ';'
         {
-            $$ =[{
-                type: 'var',
-                id: $2
-            }];
-            if($3) $$.concat($3);
+            symbol_table.symbols[$2] = {type: 'var'};
+            //$$ =[{
+                //type: 'var',
+                //id: $2
+            //}];
+            //if($3) $$.concat($3);
         }
     ;
 
@@ -166,11 +167,12 @@ anotheridvar
     : /*empty*/
     |',' ID anotheridvar ';'
         {
-	         $$ =[{
-                type: 'var',
-                id: $2
-             }];
-             if($3)$$.concat($3);
+            symbol_table.symbols[$2] = {type: 'var'};
+	         //$$ =[{
+                //type: 'var',
+                //id: $2
+             //}];
+             //if($3)$$.concat($3);
         }
     ;
 
