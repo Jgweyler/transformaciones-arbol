@@ -124,10 +124,12 @@ constants
     :/* empty */
     |CONST ID '=' NUMBER anotheridconst ';'
         {
+            symbol_table.symbols[$2] = {type: 'const', value: $4};
             $$ =[{
                 type: 'constant',
-                right: $4,
-                left: $2
+                value: $4,
+                id: $2,
+                declared_in: symbol_table.name
             }];
             if($5) $$.concat($5);
         }
@@ -136,11 +138,14 @@ constants
 anotheridconst
     : /* empty */
     |',' ID '=' NUMBER anotheridconst
-        {$$ =[{
+        {
+            symbol_table.symbols[$2] = {type: 'const', value: $4};
+            $$ =[{
                 type: 'constant',
-                right: $4,
-                left: $2
-             }];
+                value: $4,
+                id: $2
+                declared_in: symbol_table.name
+            }];
             if ($5) $$.concat($5);
         }
     ;
@@ -151,7 +156,7 @@ variables
         {
             $$ =[{
                 type: 'var',
-                right: $2
+                id: $2
             }];
             if($3) $$.concat($3);
         }
@@ -163,7 +168,7 @@ anotheridvar
         {
 	         $$ =[{
                 type: 'var',
-                right: $2
+                id: $2
              }];
              if($3)$$.concat($3);
         }
