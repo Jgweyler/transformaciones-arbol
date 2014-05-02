@@ -42,6 +42,45 @@ function buscarDaclaracion(id){
     throw "Error! No se ha declarado la variable o contante '" + id + "' .";
 }
 
+function comprobarArgs(x, y){
+    var aux;
+    var a = ambito;
+    do{
+        aux = symbol_tables[a].symbols[x];
+        if(aux && aux['type'] == 'PROCEDURE' && symbol_tables[a].symbols[x]['N_args'] != y)
+            throw "Error! Los argumentos del procedimiento '" + x + "' no son validos";
+            a--;
+    }while (a >= 0 && !aux);
+
+    return;
+}
+
+function IgualarConst(x) {
+    var aux;
+    var a = ambito;
+    do {
+      aux = symbol_tables[a].symbols[x];
+      if(aux && f['type'] == 'CONST')
+    throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
+      s--;
+    } while (a >= 0 && !aux);
+    
+    return;
+  }
+
+  function IgualarProc(x) {
+    var aux;
+    var a = ambito;
+    do {
+      aux = symbol_tables[a].symbols[x];
+      if(aux && aux['type'] == 'PROCEDURE')
+    throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
+      s--;
+    } while (s >= 0 && !f);
+    
+    return;
+  }
+
 %}
 
 %token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
