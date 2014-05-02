@@ -16,6 +16,19 @@ function anyadirAmbito(id){
     symbol_table = symbol_tables[ambito];
 }
 
+function procedureDeclarado(id){
+    var aux;
+    var a = ambito;
+    do{
+        aux = symbol_tables[a].symbols[id]
+        if(aux)
+            return;
+        a --;
+    }while (a >= 0 && !aux);
+
+    throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
+}
+
 %}
 
 %token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
