@@ -1,7 +1,9 @@
 /* description: Parses end executes mathematical expressions. */
 
 %{
-var symbol_table = {};
+var ambito = 0;
+var symbol_tables = [{ name: 'Global', father: null, symbols: {} }];
+var symbol_table = symbol_tables[ambito];
 
 %}
 
