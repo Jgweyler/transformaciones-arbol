@@ -178,61 +178,19 @@ anotheridvar
 
 procedures
     :
-    |PROCEDURE funct ';' block ';' procedures 
+    |PROCEDURE ID parameters ';' block ';' 
         {
-             
+             symbol_table.symbols[$2] = {type: 'procedure'};
             $$ = [{ type: 'procedure', 
 	    	    id: $2,
 	    	    arguments: $3,
                 N_args: $3.length,
 	   	        block: $5
             }];
-	    if($6) $$ = $$.concat($6);
+	    if($7) $$ = $$.concat($7);
         }
     ;
 
-funct
-    : ID parameters
-        {
-            //Falta comprobar si ya ha sido declarado.
-            symbol_table.symbols[$1] = {type: 'procedure', name: $1};
-            anyadirAmbito($1);
-            //Añadir parametros como variables declaradas.
-            $$ = {id: $1, parameters: $2};
-        }
-    ;
-
-    parameters
-    : /*empty*/
-    | '(' ID anotherparameter ')'
-        {
-            $$ = [{
-                type: 'parameter',
-                right: $2
-            }];
-            if($3) $$.concat($3);
-        }
-    | '(' ')'
-        {
-          $$ = [];
-        }
-    | /* empty */
-        {
-          $$ = [];
-        }
-    ;
-
-anotherparameter
-    : /*empty*/
-    | ',' ID anotherparameter
-        {
-            $$ = [{
-                type: 'parameter',
-                right: $2
-            }];
-            if($3) $$.concat($3);
-        }
-    ;
 
 statement
     : ID '=' expression
@@ -300,7 +258,29 @@ anotherstatement
         }
     ;
 
+parameters
+    : /*empty*/
+    | '(' ID anotherparameter ')'
+        {
+            $$ = [{
+                type: 'parameter',
+                right: $2
+            }];
+            if($3) $$.concat($3);
+        }
+    ;
 
+anotherparameter
+    : /*empty*/
+    | ',' ID anotherparameter
+        {
+            $$ = [{
+                type: 'parameter',
+                right: $2
+            }];
+            if($3) $$.concat($3);
+        }
+    ;
 
 condition
     :ODD expression
