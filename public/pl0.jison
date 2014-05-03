@@ -178,8 +178,9 @@ anotheridvar
 
 procedures
     :
-    |PROCEDURE ID parameters ';' block ';' procedures
+    |PROCEDURE ID parameters ';' block ';' 
         {
+             symbol_table.symbols[$2] = {type: 'procedure'};
             $$ = [{ type: 'procedure', 
 	    	    id: $2,
 	    	    arguments: $3,
