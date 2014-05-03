@@ -60,7 +60,7 @@ function IgualarConst(x) {
     var a = ambito;
     do {
       aux = symbol_tables[a].symbols[x];
-      if(aux && f['type'] == 'CONST')
+      if(aux && aux['type'] == 'const')
     throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
       s--;
     } while (a >= 0 && !aux);
@@ -194,6 +194,8 @@ statement
     : ID '=' expression
         {
             buscarDeclaracion($1);
+            IgualarConst($)1;
+
             $$ = {
                 type: '=',
                 right: $3,
@@ -299,6 +301,7 @@ expression
     : ID '=' expression
          {
             buscarDeclaracion($1);
+            IgualarConst($1);
             $$ = { type: '=',
                  left: { type: 'ID', value: $1 },
                  right: $3 

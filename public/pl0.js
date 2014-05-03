@@ -149,6 +149,8 @@ case 12:
 break;
 case 13:
             buscarDeclaracion($$[$0-2]);
+            IgualarConst($)1;
+
             this.$ = {
                 type: '=',
                 right: $$[$0],
@@ -236,6 +238,7 @@ case 26:
 break;
 case 27:
             buscarDeclaracion($$[$0-2]);
+            IgualarConst($$[$0-2]);
             this.$ = { type: '=',
                  left: { type: 'ID', value: $$[$0-2] },
                  right: $$[$0] 
@@ -493,7 +496,7 @@ function IgualarConst(x) {
     var a = ambito;
     do {
       aux = symbol_tables[a].symbols[x];
-      if(aux && f['type'] == 'CONST')
+      if(aux && aux['type'] == 'const')
     throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
       s--;
     } while (a >= 0 && !aux);
