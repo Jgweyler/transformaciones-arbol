@@ -501,7 +501,7 @@ function IgualarConst(x) {
       aux = symbol_tables[a].symbols[x];
       if(aux && aux['type'] == 'const')
     throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      s--;
+      a--;
     } while (a >= 0 && !aux);
     
     return;
