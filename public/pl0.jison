@@ -183,6 +183,7 @@ procedures
             $$ = [{ type: 'procedure', 
 	    	    id: $2,
 	    	    arguments: $3,
+                N_args: $3.length,
 	   	        block: $5
             }];
 	    if($7) $$ = $$.concat($7);

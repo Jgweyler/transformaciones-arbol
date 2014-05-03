@@ -142,6 +142,7 @@ case 12:
             this.$ = [{ type: 'procedure', 
 	    	    id: $$[$0-5],
 	    	    arguments: $$[$0-4],
+                N_args: $$[$0-4].length,
 	   	        block: $$[$0-2]
             }];
 	    if($$[$0]) this.$ = this.$.concat($$[$0]);
