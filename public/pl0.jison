@@ -75,8 +75,8 @@ function IgualarConst(x) {
       aux = symbol_tables[a].symbols[x];
       if(aux && aux['type'] == 'procedure')
     throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      s--;
-    } while (s >= 0 && !f);
+      a--;
+    } while (a >= 0 && !aux);
     
     return;
   }
