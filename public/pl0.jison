@@ -39,7 +39,7 @@ function buscarDeclaracion(id){
         a --;
     }while(a >=0 && !aux);
 
-    throw "Error! No se ha declarado la variable o contante '" + id + "' .";
+    throw "Error! No se ha declarado la variable o constante '" + id + "' .";
 }
 
 function comprobarArgs(x, y){
@@ -165,7 +165,7 @@ variables
 
 anotheridvar
     : /*empty*/
-    |',' ID anotheridvar ';'
+    |',' ID anotheridvar 
         {
             symbol_table.symbols[$2] = {type: 'var'};
 	         //$$ =[{
