@@ -234,10 +234,12 @@ case 26:
             };
         
 break;
-case 27:this.$ = { type: '=',
+case 27:
+            buscarDeclaracion($$[$0-2]);
+            this.$ = { type: '=',
                  left: { type: 'ID', value: $$[$0-2] },
                  right: $$[$0] 
-               }; 
+            }; 
          
 break;
 case 28:this.$ = {
@@ -460,7 +462,7 @@ function procedureDeclarado(id){
     throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
 }
 
-function buscarDaclaracion(id){
+function buscarDeclaracion(id){
     var aux;
     var a = ambito;
     do{

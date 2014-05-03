@@ -29,7 +29,7 @@ function procedureDeclarado(id){
     throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
 }
 
-function buscarDaclaracion(id){
+function buscarDeclaracion(id){
     var aux;
     var a = ambito;
     do{
@@ -297,10 +297,12 @@ condition
 
 expression
     : ID '=' expression
-         {$$ = { type: '=',
+         {
+            buscarDeclaracion($1);
+            $$ = { type: '=',
                  left: { type: 'ID', value: $1 },
                  right: $3 
-               }; 
+            }; 
          }
     | expression '+' expression
         {$$ = {
