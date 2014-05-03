@@ -193,6 +193,7 @@ procedures
 statement
     : ID '=' expression
         {
+            buscarDeclaracion($1);
             $$ = {
                 type: '=',
                 right: $3,
