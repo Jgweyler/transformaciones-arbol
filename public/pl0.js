@@ -149,7 +149,7 @@ case 12:
 break;
 case 13:
             buscarDeclaracion($$[$0-2]);
-            IgualarConst($)1;
+            IgualarConst($$[$0-2]);
 
             this.$ = {
                 type: '=',

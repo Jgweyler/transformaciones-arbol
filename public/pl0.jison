@@ -194,7 +194,7 @@ statement
     : ID '=' expression
         {
             buscarDeclaracion($1);
-            IgualarConst($)1;
+            IgualarConst($1);
 
             $$ = {
                 type: '=',
