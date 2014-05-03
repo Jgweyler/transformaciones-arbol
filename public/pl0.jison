@@ -73,7 +73,7 @@ function IgualarConst(x) {
     var a = ambito;
     do {
       aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'PROCEDURE')
+      if(aux && aux['type'] == 'procedure')
     throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
       s--;
     } while (s >= 0 && !f);
@@ -195,6 +195,7 @@ statement
         {
             buscarDeclaracion($1);
             IgualarConst($1);
+            IgualarProc($1);
 
             $$ = {
                 type: '=',
@@ -302,6 +303,7 @@ expression
          {
             buscarDeclaracion($1);
             IgualarConst($1);
+            IgualarProc($1);
             $$ = { type: '=',
                  left: { type: 'ID', value: $1 },
                  right: $3 

@@ -150,6 +150,7 @@ break;
 case 13:
             buscarDeclaracion($$[$0-2]);
             IgualarConst($$[$0-2]);
+            IgualarProc($$[$0-2]);
 
             this.$ = {
                 type: '=',
@@ -239,6 +240,7 @@ break;
 case 27:
             buscarDeclaracion($$[$0-2]);
             IgualarConst($$[$0-2]);
+            IgualarProc($$[$0-2]);
             this.$ = { type: '=',
                  left: { type: 'ID', value: $$[$0-2] },
                  right: $$[$0] 
@@ -509,7 +511,7 @@ function IgualarConst(x) {
     var a = ambito;
     do {
       aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'PROCEDURE')
+      if(aux && aux['type'] == 'procedure')
     throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
       s--;
     } while (s >= 0 && !f);
