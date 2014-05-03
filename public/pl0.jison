@@ -178,13 +178,12 @@ anotheridvar
 
 procedures
     :
-    |PROCEDURE ID parameters ';' block ';' 
+    |PROCEDURE ID parameters ';' block ';' procedures
         {
              symbol_table.symbols[$2] = {type: 'procedure'};
             $$ = [{ type: 'procedure', 
 	    	    id: $2,
 	    	    arguments: $3,
-                N_args: $3.length,
 	   	        block: $5
             }];
 	    if($7) $$ = $$.concat($7);
