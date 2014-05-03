@@ -64,7 +64,7 @@ post '/save' do
   else
     flash[:notice] = 
       %Q{<div class="error">You are not authenticated.<br />
-         Sign in with Google.
+         Sign in with Google or Twitter.
          </div>}
     redirect back
   end
