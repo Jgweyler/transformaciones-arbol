@@ -3,7 +3,7 @@ var assert = chai.assert;
 suite('Pruebas', function(){
   test('Suma', function(){
     obj = pl0.parse("VAR x; x = 5 + 2 .")
-    assert.equal(obj[1].right, "7")
+    assert.equal(obj.right, "7")
   });
 
   test('Resta', function(){
