@@ -74,234 +74,319 @@
 var pl0 = (function(){
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"prog":3,"block":4,".":5,"EOF":6,"constants":7,"variables":8,"procedures":9,"statement":10,"CONST":11,"ID":12,"=":13,"NUMBER":14,"anotheridconst":15,";":16,",":17,"VAR":18,"anotheridvar":19,"PROCEDURE":20,"parameters":21,"expression":22,"CALL":23,"BEGIN":24,"anotherstatement":25,"END":26,"IF":27,"condition":28,"THEN":29,"ELSE":30,"WHILE":31,"DO":32,"(":33,"anotherparameter":34,")":35,"ODD":36,"COMPARISON":37,"+":38,"-":39,"*":40,"/":41,"$accept":0,"$end":1},
-terminals_: {2:"error",5:".",6:"EOF",11:"CONST",12:"ID",13:"=",14:"NUMBER",16:";",17:",",18:"VAR",20:"PROCEDURE",23:"CALL",24:"BEGIN",26:"END",27:"IF",29:"THEN",30:"ELSE",31:"WHILE",32:"DO",33:"(",35:")",36:"ODD",37:"COMPARISON",38:"+",39:"-",40:"*",41:"/"},
-productions_: [0,[3,3],[4,4],[7,0],[7,6],[15,0],[15,5],[8,0],[8,4],[19,0],[19,3],[9,0],[9,7],[10,3],[10,3],[10,4],[10,4],[10,6],[10,4],[25,0],[25,3],[21,0],[21,4],[34,0],[34,3],[28,2],[28,3],[22,3],[22,3],[22,3],[22,3],[22,3],[22,2],[22,2],[22,3],[22,1],[22,1]],
+symbols_: {"error":2,"program":3,"block":4,"DOT":5,"EOF":6,"block_const":7,"block_vars":8,"block_procs":9,"statement":10,"CONST":11,"ID":12,"=":13,"NUMBER":14,"block_const_ids":15,";":16,",":17,"VAR":18,"block_vars_id":19,"PROCEDURE":20,"functionname":21,"block_procs_parameters":22,"(":23,"block_procs_parameters_ids":24,")":25,"expression":26,"CALL":27,"statement_call_arguments":28,"BEGIN":29,"statement_begin_st":30,"END":31,"IF":32,"condition":33,"THEN":34,"ELSE":35,"WHILE":36,"DO":37,"statement_call_arguments_ids":38,"ODD":39,"COMPARISON":40,"+":41,"-":42,"*":43,"/":44,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"DOT",6:"EOF",11:"CONST",12:"ID",13:"=",14:"NUMBER",16:";",17:",",18:"VAR",20:"PROCEDURE",23:"(",25:")",27:"CALL",29:"BEGIN",31:"END",32:"IF",34:"THEN",35:"ELSE",36:"WHILE",37:"DO",39:"ODD",40:"COMPARISON",41:"+",42:"-",43:"*",44:"/"},
+productions_: [0,[3,3],[4,4],[7,6],[7,0],[15,5],[15,0],[8,4],[8,0],[19,3],[19,0],[9,6],[9,0],[21,2],[22,5],[22,2],[22,0],[24,4],[24,0],[10,3],[10,3],[10,4],[10,4],[10,6],[10,4],[10,0],[28,4],[28,4],[28,2],[28,0],[38,3],[38,3],[38,0],[30,3],[30,0],[33,2],[33,3],[26,3],[26,3],[26,3],[26,3],[26,2],[26,3],[26,1],[26,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: 
-          this.$ = {type: 'program',
-		        block: $$[$0-2] 
-               };
-          return this.$;
-        
+case 1:
+        return [{symboltable: symbolsToString()}].concat($$[$0-1]);
+      
 break;
-case 2: 
-	    this.$ = {type: 'block', 
-		     constants: $$[$0-3],
-             vars: $$[$0-2],
-             procs: $$[$0-1], 
-		     sts: $$[$0] 
-            };
-	
+case 2:
+        this.$ = [];
+
+        if($$[$0-1]) this.$ = this.$.concat($$[$0-1])
+
+        if(this.$.length > 0)
+          this.$ = [this.$];
+
+        if($$[$0])
+          this.$ = this.$.concat($$[$0]);
+      
+break;
+case 3:
+        if (symbolTable.vars[$$[$0-4]]) 
+          throw new Error("Constante "+$$[$0-4]+" ya definida.");
+          symbolTable.vars[$$[$0-4]] = { type: "CONST", value: $$[$0-2] }
+          this.$ = [{ type: $$[$0-5], id: $$[$0-4], value: $$[$0-2] }];
+            if($$[$0-1]) this.$ = this.$.concat($$[$0-1]);
+        
 break;
 case 4:
-            symbol_table.symbols[$$[$0-4]] = {type: 'const', value: $$[$0-2]};
-            //this.$ =[{
-                //type: 'constant',
-                //value: $$[$0-2],
-                //id: $$[$0-4],
-                //declared_in: symbol_table.name
-            //}];
-            //if($$[$0-1]) this.$.concat($$[$0-1]);
+          this.$ = [];
         
 break;
-case 6:
-            symbol_table.symbols[$$[$0-3]] = {type: 'const', value: $$[$0-1]};
-            //this.$ =[{
-               // type: 'constant',
-               //value: $$[$0-1],
-               //id: $$[$0-3]
-               //declared_in: symbol_table.name
-            //}];
-            //if ($$[$0]) this.$.concat($$[$0]);
-        
-break;
-case 8:
-            symbol_table.symbols[$$[$0-2]] = {type: 'var'};
-            //this.$ =[{
-                //type: 'var',
-                //id: $$[$0-2]
-            //}];
-            //if($$[$0-1]) this.$.concat($$[$0-1]);
-        
-break;
-case 10:
-            symbol_table.symbols[$$[$0-1]] = {type: 'var'};
-	         //this.$ =[{
-                //type: 'var',
-                //id: $$[$0-1]
-             //}];
-             //if($$[$0])this.$.concat($$[$0]);
-        
-break;
-case 12:
-             symbol_table.symbols[$$[$0-5]] = {type: 'procedure'};
-            this.$ = [{ type: 'procedure', 
-	    	    id: $$[$0-5],
-	    	    arguments: $$[$0-4],
-	   	        block: $$[$0-2]
-            }];
-	    if($$[$0]) this.$ = this.$.concat($$[$0]);
-        
-break;
-case 13:
-            buscarDeclaracion($$[$0-2]);
-            IgualarConst($$[$0-2]);
-            IgualarProc($$[$0-2]);
+case 5:
+        if (symbolTable.vars[$$[$0-3]]) 
+          throw new Error("Constante "+$$[$0-3]+" ya definida.");
 
-            this.$ = {
-                type: '=',
-                right: $$[$0],
-                left: {type: 'ID', value: $$[$0-2]}
-            };
-        
-break;
-case 14:
-            this.$ = { 
-                type: 'call',
-                id: $$[$0-1],
-                arguments: $$[$0]
-            };
-        
-break;
-case 15:
-            var stat = [$$[$0-2]];
-            if($$[$0-1]) stat.concat($$[$0-1]);
-            this.$ = {
-                type: 'begin',
-                statements: stat
-            };
-        
-break;
-case 16:
-            this.$ = {
-                type: 'ifthen',
-                condition: $$[$0-2],
-                statement: $$[$0]
-            };
-        
-break;
-case 17:
-            this.$ = {
-                type: 'ifelse',
-                condition: $$[$0-4],
-                statement_true: $$[$0-2],
-                statement_false: $$[$0]
-            };
-        
-break;
-case 18:
-            this.$ = {
-                type: 'while',
-                condition: $$[$0-2],
-                statement: $$[$0]
-            };
-        
-break;
-case 20:
-            this.$ = [$$[$0-1]];
+            symbolTable.vars[$$[$0-3]] = { type: "CONST", value: $$[$0-1] }
+            this.$ = [{ type: "CONST", id: $$[$0-3], value: $$[$0-1] }];
             if($$[$0]) this.$ = this.$.concat($$[$0]);
         
 break;
-case 22:
-            this.$ = [{
-                type: 'parameter',
-                right: $$[$0-2]
-            }];
-            if($$[$0-1]) this.$.concat($$[$0-1]);
+case 6:
+        this.$ = [];
+      
+break;
+case 7:
+        if (symbolTable.vars[$$[$0-2]]) 
+          throw new Error("Variable "+$$[$0-2]+" ya definida.");
+            symbolTable.vars[$$[$0-2]] = { type: "VAR", value: "" }
+            this.$ = [{ type: $$[$0-3], value: $$[$0-2] }];
+            if($$[$0-1]) this.$ = this.$.concat($$[$0-1]);
         
+break;
+case 8:
+          this.$ = [];
+        
+break;
+case 9:
+          if (symbolTable.vars[$$[$0-1]]) 
+            throw new Error("Variable "+$$[$0-1]+" ya definida.");
+          symbolTable.vars[$$[$0-1]] = { type: "VAR", value: "" }
+          this.$ = [{ type: "VAR", value: $$[$0-1] }];
+          if($$[$0]) this.$ = this.$.concat($$[$0]);
+        
+break;
+case 10:
+          this.$ = [];
+        
+break;
+case 11:
+          this.$ = [{type: $$[$0-5], id: $$[$0-4].id, parameters: $$[$0-4].parameters, block: $$[$0-2], symboltable: symbolsToString()}];
+          getFormerScope();
+
+          if($$[$0]) this.$ = this.$.concat($$[$0]);
+        
+break;
+case 12:
+            this.$ = [];
+          
+break;
+case 13:
+        if (symbolTable.vars[$$[$0-1]]) 
+          throw new Error("Función "+$$[$0-1]+" ya definido.");
+        symbolTable.vars[$$[$0-1]] = { type: "PROCEDURE", name: $$[$0-1], value: $$[$0].length }; // Contar parámetros en "numparameters"
+        makeNewScope($$[$0-1]);
+        
+        // Asociar los parámetros al ámbito actual.
+        $$[$0].forEach(function(p) {
+          // Guardar parámetro
+          console.log(p.value);
+          if (symbolTable.vars[p.value]) 
+            throw new Error("Identificador " + p.value + " ya definido.");
+            
+          symbolTable.vars[p.value] = { type: "PARAM", value: "" };
+        });
+
+        this.$ = {id: $$[$0-1], parameters: $$[$0]};
+      
+break;
+case 14:
+          this.$ = [{type: 'ID', value: $$[$0-2]}].concat($$[$0-1]);
+        
+break;
+case 15:
+          this.$ = [];
+        
+break;
+case 16:
+          this.$ = [];
+        
+break;
+case 17:
+              this.$ = [{type: 'ID', value: $$[$0-1]}].concat($$[$0]);
+            
+break;
+case 18:
+              this.$ = [];
+            
+break;
+case 19:
+        var info = findSymbol($$[$0-2]);
+        var s = info[1];
+        info = info[0];
+
+        if (info && info.type === "VAR") { 
+          this.$ = {type: $$[$0-1], left: {id: $$[$0-2], declared_in: symbolTables[s].name }, right: $$[$0]};
+        }
+        else if (info && info.type === "PARAM") { //Parametro 
+          this.$ = {type: $$[$0-1], left: {id: $$[$0-2], declared_in: symbolTables[s].name }, right: $$[$0] /*, declared_in: symbolTables[s].name */}; // ¿?
+        }
+        else if (info && info.type === "CONST") { 
+           throw new Error("Symbol "+$$[$0-2]+" refers to a constant");
+        }
+        else if (info && info.type === "PROCEDURE") { 
+           throw new Error("Symbol "+$$[$0-2]+" refers to a function");
+        }
+        else { 
+           throw new Error("Symbol "+$$[$0-2]+" not declared");
+        }
+        
+break;
+case 20:
+        var info = findSymbol($$[$0-1]);
+      var s = info[1];
+      info = info[0];
+
+
+      if (info && info.type === "VAR") { 
+        throw new Error("Symbol "+$$[$0-1]+" refers to a variable");
+      }
+      else if (info && info.type === "PARAM") { //Parametro 
+         throw new Error("Symbol "+$$[$0-1]+" refers to a parameter");
+      }
+      else if (info && info.type === "CONST") { 
+         throw new Error("Symbol "+$$[$0-1]+" refers to a constant");
+      }
+      else if (info && info.type === "PROCEDURE" && info.value == $$[$0].length) { 
+         this.$ = {type: $$[$0-2], id: $$[$0-1], arguments: $$[$0]};
+      }
+      else if(info && info.type === "PROCEDURE") {
+        throw new Error("Numero de argumentos invalido para " + $$[$0-1] + "(" + $$[$0].length + " de " + info.value + ")");
+      }
+      else { 
+         throw new Error("Symbol "+$$[$0-1]+" not declared");
+      }
+
+      
+break;
+case 21:
+        this.$ = {type: $$[$0-3], value: [$$[$0-2]].concat($$[$0-1])};
+      
+break;
+case 22:
+        this.$ = {type: $$[$0-3], condition: $$[$0-2], statement: $$[$0]};
+      
+break;
+case 23:
+        this.$ = {type: "IFELSE", condition: $$[$0-4], statement_true: $$[$0-2], statement_false: $$[$0]};
+      
 break;
 case 24:
-            this.$ = [{
-                type: 'parameter',
-                right: $$[$0-1]
-            }];
-            if($$[$0]) this.$.concat($$[$0]);
-        
+        this.$ = {type: $$[$0-3], condition: $$[$0-2], statement: $$[$0]};
+      
 break;
 case 25:
-            this.$ = {
-                type: 'ID',
-                exp: $$[$0]
-            };
-        
+        this.$ = [];
+      
 break;
 case 26:
-            this.$ = {
-                type: $$[$0-1],
-                right: $$[$0],
-                left: $$[$0-2]
-            };
+          // Comprobar que existe el identificador, y que no sea un id de PROCEDURE
+          var info = findSymbol($$[$0-2]);
+          var s = info[1];
+          info = info[0];
+
+          if (info && info.type === "PROCEDURE") { 
+            throw new Error("Symbol "+$$[$0-2]+" refers to a procedure identifier.");
+          }
+          else if(info) {
+            this.$ = [{type: 'ID', value: $$[$0-2]}].concat($$[$0-1]);
+          }
+          else { 
+             throw new Error("Symbol "+$$[$0-2]+" not declared");
+            }
         
 break;
 case 27:
-            buscarDeclaracion($$[$0-2]);
-            IgualarConst($$[$0-2]);
-            IgualarProc($$[$0-2]);
-            this.$ = { type: '=',
-                 left: { type: 'ID', value: $$[$0-2] },
-                 right: $$[$0] 
-            }; 
-         
-break;
-case 28:this.$ = {
-                type: '+',
-                left: $$[$0-2],
-                right: $$[$0]
-              };
+          this.$ = [{type: 'NUMBER', value: $$[$0-2]}].concat($$[$0-1]);
         
 break;
-case 29:this.$ = {
-                type: '-',
-                left: $$[$0-2],
-                right: $$[$0]
-              };
+case 28:
+          this.$ = [];
         
 break;
-case 30:this.$ = {
-                type: '*',
-                left: $$[$0-2],
-                right: $$[$0]
-              };
+case 29:
+          this.$ = [];
+        
+break;
+case 30:
+          // Comprobar que existe el identificador, y que no sea un id de PROCEDURE
+          var info = findSymbol($$[$0-1]);
+          var s = info[1];
+          info = info[0];
+
+          if (info && info.type === "PROCEDURE") { 
+            throw new Error("Symbol "+$$[$0-1]+" refers to a procedure identifier.");
+          }
+          else if(info) {
+            this.$ = [{type: 'ID', value: $$[$0-1]}].concat($$[$0]);
+          }
+          else { 
+             throw new Error("Symbol "+$$[$0-1]+" not declared.");
+            }
         
 break;
 case 31:
-          this.$ ={
-                type: "/",
-                left: $$[$0-2],
-                right: $$[$0]
-              };
-          
-break;
-case 32:this.$ = {
-                type: '-',
-                right: $$[$0]
-               };
+          this.$ = [{type: 'NUMBER', value: $$[$0-1]}].concat($$[$0]);
         
 break;
-case 33:this.$ = {
-                type: '+',
-                right: $$[$0]
-               };
+case 32:
+          this.$ = [];
         
 break;
-case 34:this.$ = $$[$0-1];
-break;
-case 35:this.$ = {type: 'NUM', value: Number(yytext)};
-break;
-case 36: this.$ = {type: 'ID',
-                value: $$[$0]
-                }; 
+case 33:
+          // Posibles problemas de compatibilidad con IE < 9
+          aux = $$[$0-1];
+          if(Object.keys(aux).length == 0)
+            this.$ = [];
+          else
+            this.$ = [$$[$0-1]];
+
+          if($$[$0]) this.$ = this.$.concat($$[$0])
         
+break;
+case 34:
+          this.$ = [];
+        
+break;
+case 35:
+        this.$ = {type: $$[$0-1], value: $$[$0]};
+      
+break;
+case 36:
+        this.$ = {type: $$[$0-1], left: $$[$0-2], right: $$[$0]};
+      
+break;
+case 37:
+        this.$ = {type: $$[$0-1], left: $$[$0-2], right: $$[$0]};
+      
+break;
+case 38:
+        this.$ = {type: $$[$0-1], left: $$[$0-2], right: $$[$0]};
+      
+break;
+case 39:
+        this.$ = {type: $$[$0-1], left: $$[$0-2], right: $$[$0]};
+      
+break;
+case 40:
+        this.$ = {type: $$[$0-1], left: $$[$0-2], right: $$[$0]};
+      
+break;
+case 41:
+        this.$ = {type: $$[$0-1], value: $$[$0]};
+      
+break;
+case 42:
+        this.$ = $$[$0-1];
+      
+break;
+case 43:
+      // Comprobar si existe
+      var info = findSymbol($$[$0]);
+      var s = info[1];
+      info = info[0];
+
+      if (info && info.type === "PROCEDURE")
+        throw new Error("Symbol "+$$[$0]+" refers to a procedure");
+      else if (info)
+      {
+        this.$ = { id: $$[$0], declared_in: symbolTables[s].name };
+      }
+      else
+        throw new Error("Symbol "+$$[$0]+" not declared");
+    
 break;
 }
 },
-table: [{3:1,4:2,7:3,11:[1,4],12:[2,3],18:[2,3],20:[2,3],23:[2,3],24:[2,3],27:[2,3],31:[2,3]},{1:[3]},{5:[1,5]},{8:6,12:[2,7],18:[1,7],20:[2,7],23:[2,7],24:[2,7],27:[2,7],31:[2,7]},{12:[1,8]},{6:[1,9]},{9:10,12:[2,11],20:[1,11],23:[2,11],24:[2,11],27:[2,11],31:[2,11]},{12:[1,12]},{13:[1,13]},{1:[2,1]},{10:14,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{12:[1,20]},{16:[2,9],17:[1,22],19:21},{14:[1,23]},{5:[2,2],16:[2,2]},{13:[1,24]},{12:[1,25]},{10:26,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{12:[1,30],14:[1,34],22:29,28:27,33:[1,33],36:[1,28],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:29,28:35,33:[1,33],36:[1,28],38:[1,32],39:[1,31]},{16:[2,21],21:36,33:[1,37]},{16:[1,38]},{12:[1,39]},{15:40,16:[2,5],17:[1,41]},{12:[1,30],14:[1,34],22:42,33:[1,33],38:[1,32],39:[1,31]},{5:[2,21],16:[2,21],21:43,26:[2,21],30:[2,21],33:[1,37]},{16:[1,45],25:44,26:[2,19]},{29:[1,46]},{12:[1,30],14:[1,34],22:47,33:[1,33],38:[1,32],39:[1,31]},{37:[1,48],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{5:[2,36],13:[1,53],16:[2,36],26:[2,36],29:[2,36],30:[2,36],32:[2,36],35:[2,36],37:[2,36],38:[2,36],39:[2,36],40:[2,36],41:[2,36]},{12:[1,30],14:[1,34],22:54,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:55,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:56,33:[1,33],38:[1,32],39:[1,31]},{5:[2,35],16:[2,35],26:[2,35],29:[2,35],30:[2,35],32:[2,35],35:[2,35],37:[2,35],38:[2,35],39:[2,35],40:[2,35],41:[2,35]},{32:[1,57]},{16:[1,58]},{12:[1,59]},{12:[2,8],20:[2,8],23:[2,8],24:[2,8],27:[2,8],31:[2,8]},{16:[2,9],17:[1,22],19:60},{16:[1,61]},{12:[1,62]},{5:[2,13],16:[2,13],26:[2,13],30:[2,13],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{5:[2,14],16:[2,14],26:[2,14],30:[2,14]},{26:[1,63]},{10:64,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{10:65,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{29:[2,25],32:[2,25],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{12:[1,30],14:[1,34],22:66,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:67,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:68,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:69,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:70,33:[1,33],38:[1,32],39:[1,31]},{12:[1,30],14:[1,34],22:71,33:[1,33],38:[1,32],39:[1,31]},{5:[2,32],16:[2,32],26:[2,32],29:[2,32],30:[2,32],32:[2,32],35:[2,32],37:[2,32],38:[2,32],39:[2,32],40:[2,32],41:[2,32]},{5:[2,33],16:[2,33],26:[2,33],29:[2,33],30:[2,33],32:[2,33],35:[2,33],37:[2,33],38:[2,33],39:[2,33],40:[2,33],41:[2,33]},{35:[1,72],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{10:73,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{4:74,7:3,11:[1,4],12:[2,3],18:[2,3],20:[2,3],23:[2,3],24:[2,3],27:[2,3],31:[2,3]},{17:[1,76],34:75,35:[2,23]},{16:[2,10]},{12:[2,4],18:[2,4],20:[2,4],23:[2,4],24:[2,4],27:[2,4],31:[2,4]},{13:[1,77]},{5:[2,15],16:[2,15],26:[2,15],30:[2,15]},{16:[1,45],25:78,26:[2,19]},{5:[2,16],16:[2,16],26:[2,16],30:[1,79]},{29:[2,26],32:[2,26],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{5:[2,28],16:[2,28],26:[2,28],29:[2,28],30:[2,28],32:[2,28],35:[2,28],37:[2,28],38:[2,28],39:[2,28],40:[1,51],41:[1,52]},{5:[2,29],16:[2,29],26:[2,29],29:[2,29],30:[2,29],32:[2,29],35:[2,29],37:[2,29],38:[2,29],39:[2,29],40:[1,51],41:[1,52]},{5:[2,30],16:[2,30],26:[2,30],29:[2,30],30:[2,30],32:[2,30],35:[2,30],37:[2,30],38:[2,30],39:[2,30],40:[2,30],41:[2,30]},{5:[2,31],16:[2,31],26:[2,31],29:[2,31],30:[2,31],32:[2,31],35:[2,31],37:[2,31],38:[2,31],39:[2,31],40:[2,31],41:[2,31]},{5:[2,27],16:[2,27],26:[2,27],29:[2,27],30:[2,27],32:[2,27],35:[2,27],37:[2,27],38:[1,49],39:[1,50],40:[1,51],41:[1,52]},{5:[2,34],16:[2,34],26:[2,34],29:[2,34],30:[2,34],32:[2,34],35:[2,34],37:[2,34],38:[2,34],39:[2,34],40:[2,34],41:[2,34]},{5:[2,18],16:[2,18],26:[2,18],30:[2,18]},{16:[1,80]},{35:[1,81]},{12:[1,82]},{14:[1,83]},{26:[2,20]},{10:84,12:[1,15],23:[1,16],24:[1,17],27:[1,18],31:[1,19]},{9:85,12:[2,11],20:[1,11],23:[2,11],24:[2,11],27:[2,11],31:[2,11]},{5:[2,22],16:[2,22],26:[2,22],30:[2,22]},{17:[1,76],34:86,35:[2,23]},{15:87,16:[2,5],17:[1,41]},{5:[2,17],16:[2,17],26:[2,17],30:[2,17]},{12:[2,12],23:[2,12],24:[2,12],27:[2,12],31:[2,12]},{35:[2,24]},{16:[2,6]}],
-defaultActions: {9:[2,1],60:[2,10],78:[2,20],86:[2,24],87:[2,6]},
+table: [{3:1,4:2,5:[2,4],7:3,11:[1,4],12:[2,4],18:[2,4],20:[2,4],27:[2,4],29:[2,4],32:[2,4],36:[2,4]},{1:[3]},{5:[1,5]},{5:[2,8],8:6,12:[2,8],16:[2,8],18:[1,7],20:[2,8],27:[2,8],29:[2,8],32:[2,8],36:[2,8]},{12:[1,8]},{6:[1,9]},{5:[2,12],9:10,12:[2,12],16:[2,12],20:[1,11],27:[2,12],29:[2,12],32:[2,12],36:[2,12]},{12:[1,12]},{13:[1,13]},{1:[2,1]},{5:[2,25],10:14,12:[1,15],16:[2,25],27:[1,16],29:[1,17],32:[1,18],36:[1,19]},{12:[1,21],21:20},{16:[2,10],17:[1,23],19:22},{14:[1,24]},{5:[2,2],16:[2,2]},{13:[1,25]},{12:[1,26]},{10:27,12:[1,15],16:[2,25],27:[1,16],29:[1,17],31:[2,25],32:[1,18],36:[1,19]},{12:[1,33],14:[1,34],23:[1,32],26:30,33:28,39:[1,29],42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:30,33:35,39:[1,29],42:[1,31]},{16:[1,36]},{16:[2,16],22:37,23:[1,38]},{16:[1,39]},{12:[1,40]},{15:41,16:[2,6],17:[1,42]},{12:[1,33],14:[1,34],23:[1,32],26:43,42:[1,31]},{5:[2,29],16:[2,29],23:[1,45],28:44,31:[2,29],35:[2,29]},{16:[1,47],30:46,31:[2,34]},{34:[1,48]},{12:[1,33],14:[1,34],23:[1,32],26:49,42:[1,31]},{40:[1,50],41:[1,51],42:[1,52],43:[1,53],44:[1,54]},{12:[1,33],14:[1,34],23:[1,32],26:55,42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:56,42:[1,31]},{5:[2,43],16:[2,43],25:[2,43],31:[2,43],34:[2,43],35:[2,43],37:[2,43],40:[2,43],41:[2,43],42:[2,43],43:[2,43],44:[2,43]},{5:[2,44],16:[2,44],25:[2,44],31:[2,44],34:[2,44],35:[2,44],37:[2,44],40:[2,44],41:[2,44],42:[2,44],43:[2,44],44:[2,44]},{37:[1,57]},{4:58,7:3,11:[1,4],12:[2,4],16:[2,4],18:[2,4],20:[2,4],27:[2,4],29:[2,4],32:[2,4],36:[2,4]},{16:[2,13]},{18:[1,59],25:[1,60]},{5:[2,7],12:[2,7],16:[2,7],20:[2,7],27:[2,7],29:[2,7],32:[2,7],36:[2,7]},{16:[2,10],17:[1,23],19:61},{16:[1,62]},{12:[1,63]},{5:[2,19],16:[2,19],31:[2,19],35:[2,19],41:[1,51],42:[1,52],43:[1,53],44:[1,54]},{5:[2,20],16:[2,20],31:[2,20],35:[2,20]},{12:[1,64],14:[1,65],25:[1,66]},{31:[1,67]},{10:68,12:[1,15],16:[2,25],27:[1,16],29:[1,17],31:[2,25],32:[1,18],36:[1,19]},{5:[2,25],10:69,12:[1,15],16:[2,25],27:[1,16],29:[1,17],31:[2,25],32:[1,18],35:[2,25],36:[1,19]},{34:[2,35],37:[2,35],41:[1,51],42:[1,52],43:[1,53],44:[1,54]},{12:[1,33],14:[1,34],23:[1,32],26:70,42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:71,42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:72,42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:73,42:[1,31]},{12:[1,33],14:[1,34],23:[1,32],26:74,42:[1,31]},{5:[2,41],16:[2,41],25:[2,41],31:[2,41],34:[2,41],35:[2,41],37:[2,41],40:[2,41],41:[2,41],42:[2,41],43:[2,41],44:[2,41]},{25:[1,75],41:[1,51],42:[1,52],43:[1,53],44:[1,54]},{5:[2,25],10:76,12:[1,15],16:[2,25],27:[1,16],29:[1,17],31:[2,25],32:[1,18],35:[2,25],36:[1,19]},{16:[1,77]},{12:[1,78]},{16:[2,15]},{16:[2,9]},{5:[2,3],12:[2,3],16:[2,3],18:[2,3],20:[2,3],27:[2,3],29:[2,3],32:[2,3],36:[2,3]},{13:[1,79]},{17:[1,81],25:[2,32],38:80},{17:[1,81],25:[2,32],38:82},{5:[2,28],16:[2,28],31:[2,28],35:[2,28]},{5:[2,21],16:[2,21],31:[2,21],35:[2,21]},{16:[1,47],30:83,31:[2,34]},{5:[2,22],16:[2,22],31:[2,22],35:[1,84]},{34:[2,36],37:[2,36],41:[1,51],42:[1,52],43:[1,53],44:[1,54]},{5:[2,37],16:[2,37],25:[2,37],31:[2,37],34:[2,37],35:[2,37],37:[2,37],40:[2,37],41:[2,37],42:[2,37],43:[1,53],44:[1,54]},{5:[2,38],16:[2,38],25:[2,38],31:[2,38],34:[2,38],35:[2,38],37:[2,38],40:[2,38],41:[2,38],42:[2,38],43:[1,53],44:[1,54]},{5:[2,39],16:[2,39],25:[2,39],31:[2,39],34:[2,39],35:[2,39],37:[2,39],40:[2,39],41:[2,39],42:[2,39],43:[2,39],44:[2,39]},{5:[2,40],16:[2,40],25:[2,40],31:[2,40],34:[2,40],35:[2,40],37:[2,40],40:[2,40],41:[2,40],42:[2,40],43:[2,40],44:[2,40]},{5:[2,42],16:[2,42],25:[2,42],31:[2,42],34:[2,42],35:[2,42],37:[2,42],40:[2,42],41:[2,42],42:[2,42],43:[2,42],44:[2,42]},{5:[2,24],16:[2,24],31:[2,24],35:[2,24]},{5:[2,12],9:85,12:[2,12],16:[2,12],20:[1,11],27:[2,12],29:[2,12],32:[2,12],36:[2,12]},{17:[1,87],24:86,25:[2,18]},{14:[1,88]},{25:[1,89]},{12:[1,90],14:[1,91]},{25:[1,92]},{31:[2,33]},{5:[2,25],10:93,12:[1,15],16:[2,25],27:[1,16],29:[1,17],31:[2,25],32:[1,18],35:[2,25],36:[1,19]},{5:[2,11],12:[2,11],16:[2,11],27:[2,11],29:[2,11],32:[2,11],36:[2,11]},{25:[1,94]},{18:[1,95]},{15:96,16:[2,6],17:[1,42]},{5:[2,26],16:[2,26],31:[2,26],35:[2,26]},{17:[1,81],25:[2,32],38:97},{17:[1,81],25:[2,32],38:98},{5:[2,27],16:[2,27],31:[2,27],35:[2,27]},{5:[2,23],16:[2,23],31:[2,23],35:[2,23]},{16:[2,14]},{12:[1,99]},{16:[2,5]},{25:[2,30]},{25:[2,31]},{17:[1,87],24:100,25:[2,18]},{25:[2,17]}],
+defaultActions: {9:[2,1],37:[2,13],60:[2,15],61:[2,9],83:[2,33],94:[2,14],96:[2,5],97:[2,30],98:[2,31],100:[2,17]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -440,86 +525,46 @@ parse: function parse(input) {
     return true;
 }};
 
-var ambito = 0;
-var symbol_tables = [{ name: 'Global', father: null, symbols: {} }];
-var symbol_table = symbol_tables[ambito];
+    var symbolTables = [{name: "Global", father: null, vars: {}}]; //Tabla de simbolos global
+    var scope = 0;
+    var symbolTable = symbolTables[scope]; //Tabla de simbolos actual
 
-function irHaciaArriba(){
-    ambito --;
-    symbol_table = symbol_tables [ambito];
-}
+    function getScope() {
+        return scope;
+    }
 
-function anyadirAmbito(id){
-    ambito ++;
-    symbol_tables.push({ name: id, father: symbol_table.name, symbols: {} });
-    symbol_table = symbol_tables[ambito];
-}
+    function getFormerScope() {
+        scope--;
+        symbolTable = symbolTables[scope];
+    }
 
-function procedureDeclarado(id){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[id]
-        if(aux)
-            return;
-        a --;
-    }while (a >= 0 && !aux);
-
-    throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
-}
-
-function buscarDeclaracion(id){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[id];
-        if(aux)
-            return;
-        a --;
-    }while(a >=0 && !aux);
-
-    throw "Error! No se ha declarado la variable o constante '" + id + "' .";
-}
-
-function comprobarArgs(x, y){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[x];
-        if(aux && aux['type'] == 'PROCEDURE' && symbol_tables[a].symbols[x]['N_args'] != y)
-            throw "Error! Los argumentos del procedimiento '" + x + "' no son validos";
-            a--;
-    }while (a >= 0 && !aux);
-
-    return;
-}
-
-function IgualarConst(x) {
-    var aux;
-    var a = ambito;
-    do {
-      aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'const')
-    throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      a--;
-    } while (a >= 0 && !aux);
-    
-    return;
-  }
-
-  function IgualarProc(x) {
-    var aux;
-    var a = ambito;
-    do {
-      aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'procedure')
-    throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      a--;
-    } while (a >= 0 && !aux);
-    
-    return;
-  }
-
+    function makeNewScope(id) { // En cada declaracion de procedimiento poner esto
+        scope++;
+      symbolTables[scope] =  { name: id, father: symbolTable, vars: {} };
+        symbolTable.vars[id].symbolTable = symbolTables[scope];
+        symbolTable = symbolTables[scope];
+      
+        return symbolTable;
+    }
+    function findSymbol(x) {
+        var f;
+        var s = scope;
+        do {
+                f = symbolTables[s].vars[x];
+                s--;
+        } while (s >= 0 && !f);
+        s++;
+        return [f, s];
+    }
+  
+    function symbolsToString(){
+        symbols = [];
+        for(var key in symbolTable.vars) {
+        symbols.push({id: key, type: symbolTable.vars[key].type, value: symbolTable.vars[key].value});
+    };
+        return symbols;
+    }
+  
 /* generated by jison-lex 0.2.1 */
 var lexer = (function(){
 var lexer = {
@@ -873,7 +918,7 @@ case 1:return 14
 break;
 case 2:return idORrw(yy_.yytext)
 break;
-case 3:return 37
+case 3:return 40
 break;
 case 4:return yy_.yytext;
 break;

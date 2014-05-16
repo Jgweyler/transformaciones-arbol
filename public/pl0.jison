@@ -1,363 +1,408 @@
 /* description: Parses end executes mathematical expressions. */
 
 %{
-var ambito = 0;
-var symbol_tables = [{ name: 'Global', father: null, symbols: {} }];
-var symbol_table = symbol_tables[ambito];
+    var symbolTables = [{name: "Global", father: null, vars: {}}]; //Tabla de simbolos global
+    var scope = 0;
+    var symbolTable = symbolTables[scope]; //Tabla de simbolos actual
 
-function irHaciaArriba(){
-    ambito --;
-    symbol_table = symbol_tables [ambito];
-}
+    function getScope() {
+        return scope;
+    }
 
-function anyadirAmbito(id){
-    ambito ++;
-    symbol_tables.push({ name: id, father: symbol_table.name, symbols: {} });
-    symbol_table = symbol_tables[ambito];
-}
+    function getFormerScope() {
+        scope--;
+        symbolTable = symbolTables[scope];
+    }
 
-function procedureDeclarado(id){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[id]
-        if(aux)
-            return;
-        a --;
-    }while (a >= 0 && !aux);
-
-    throw "Error, no se ha declarado previamente el procedimiento '" + id + "' .";
-}
-
-function buscarDeclaracion(id){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[id];
-        if(aux)
-            return;
-        a --;
-    }while(a >=0 && !aux);
-
-    throw "Error! No se ha declarado la variable o constante '" + id + "' .";
-}
-
-function comprobarArgs(x, y){
-    var aux;
-    var a = ambito;
-    do{
-        aux = symbol_tables[a].symbols[x];
-        if(aux && aux['type'] == 'PROCEDURE' && symbol_tables[a].symbols[x]['N_args'] != y)
-            throw "Error! Los argumentos del procedimiento '" + x + "' no son validos";
-            a--;
-    }while (a >= 0 && !aux);
-
-    return;
-}
-
-function IgualarConst(x) {
-    var aux;
-    var a = ambito;
-    do {
-      aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'const')
-    throw "Error! Se ha intentado igualar la constante '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      a--;
-    } while (a >= 0 && !aux);
-    
-    return;
-  }
-
-  function IgualarProc(x) {
-    var aux;
-    var a = ambito;
-    do {
-      aux = symbol_tables[a].symbols[x];
-      if(aux && aux['type'] == 'procedure')
-    throw "Error! Se ha intentado igualar el procedimiento '" + x + "' en el procedimiento: " + symbol_tables[a].name;
-      a--;
-    } while (a >= 0 && !aux);
-    
-    return;
-  }
-
+    function makeNewScope(id) { // En cada declaracion de procedimiento poner esto
+        scope++;
+      symbolTables[scope] =  { name: id, father: symbolTable, vars: {} };
+        symbolTable.vars[id].symbolTable = symbolTables[scope];
+        symbolTable = symbolTables[scope];
+      
+        return symbolTable;
+    }
+    function findSymbol(x) {
+        var f;
+        var s = scope;
+        do {
+                f = symbolTables[s].vars[x];
+                s--;
+        } while (s >= 0 && !f);
+        s++;
+        return [f, s];
+    }
+  
+    function symbolsToString(){
+        symbols = [];
+        for(var key in symbolTable.vars) {
+        symbols.push({id: key, type: symbolTable.vars[key].type, value: symbolTable.vars[key].value});
+    };
+        return symbols;
+    }
+  
 %}
 
-%token NUMBER ID ODD EOF IF THEN ELSE WHILE DO CALL BEGIN
+%token NUMBER ID EOF PROCEDURE CALL CONST VAR BEGIN END WHILE DO ODD IF THEN ELSE
 /* operator associations and precedence */
 
 %right THEN ELSE
-%left '==' '<=' '>=' '<' '>'
 %right '='
-%left '+' '-' 
+%left '+' '-'
 %left '*' '/'
 %left UMINUS
 
-
-%start prog
+%start program
 
 %% /* language grammar */
-
-prog
-    : block '.' EOF
-        { 
-          $$ = {type: 'program',
-		        block: $1 
-               };
-          return $$;
-        }
+program
+    :block DOT EOF
+      {
+        return [{symboltable: symbolsToString()}].concat($2);
+      }
     ;
 
 block
-    : constants variables procedures statement
-	{ 
-	    $$ = {type: 'block', 
-		     constants: $1,
-             vars: $2,
-             procs: $3, 
-		     sts: $4 
-            };
-	}
+    : block_const block_vars block_procs statement
+      {
+        $$ = [];
+
+        if($3) $$ = $$.concat($3)
+
+        if($$.length > 0)
+          $$ = [$$];
+
+        if($4)
+          $$ = $$.concat($4);
+      }
     ;
 
-constants
-    :/* empty */
-    |CONST ID '=' NUMBER anotheridconst ';'
+  block_const
+      : CONST ID '=' NUMBER block_const_ids ';'
         {
-            symbol_table.symbols[$2] = {type: 'const', value: $4};
-            //$$ =[{
-                //type: 'constant',
-                //value: $4,
-                //id: $2,
-                //declared_in: symbol_table.name
-            //}];
-            //if($5) $$.concat($5);
+        if (symbolTable.vars[$ID]) 
+          throw new Error("Constante "+$ID+" ya definida.");
+          symbolTable.vars[$ID] = { type: "CONST", value: $NUMBER }
+          $$ = [{ type: $1, id: $2, value: $4 }];
+            if($5) $$ = $$.concat($5);
         }
-    ;
-
-anotheridconst
-    : /* empty */
-    |',' ID '=' NUMBER anotheridconst
+      | /* empty */
         {
-            symbol_table.symbols[$2] = {type: 'const', value: $4};
-            //$$ =[{
-               // type: 'constant',
-               //value: $4,
-               //id: $2
-               //declared_in: symbol_table.name
-            //}];
-            //if ($5) $$.concat($5);
+          $$ = [];
         }
-    ;
+      ;
 
-variables 
-    :/*empty*/
-    |VAR ID anotheridvar ';'
+  block_const_ids
+      : ',' ID '=' NUMBER block_const_ids
         {
-            symbol_table.symbols[$2] = {type: 'var'};
-            //$$ =[{
-                //type: 'var',
-                //id: $2
-            //}];
-            //if($3) $$.concat($3);
-        }
-    ;
+        if (symbolTable.vars[$ID]) 
+          throw new Error("Constante "+$ID+" ya definida.");
 
-anotheridvar
-    : /*empty*/
-    |',' ID anotheridvar 
+            symbolTable.vars[$ID] = { type: "CONST", value: $NUMBER }
+            $$ = [{ type: "CONST", id: $2, value: $4 }];
+            if($5) $$ = $$.concat($5);
+        }
+      | /* empty */
+      {
+        $$ = [];
+      }
+      ;
+
+  block_vars
+      : VAR ID block_vars_id ';'
         {
-            symbol_table.symbols[$2] = {type: 'var'};
-	         //$$ =[{
-                //type: 'var',
-                //id: $2
-             //}];
-             //if($3)$$.concat($3);
+        if (symbolTable.vars[$ID]) 
+          throw new Error("Variable "+$ID+" ya definida.");
+            symbolTable.vars[$ID] = { type: "VAR", value: "" }
+            $$ = [{ type: $1, value: $2 }];
+            if($3) $$ = $$.concat($3);
         }
-    ;
-
-procedures
-    :
-    |PROCEDURE ID parameters ';' block ';' procedures
+      | /* empty */
         {
-             symbol_table.symbols[$2] = {type: 'procedure'};
-            $$ = [{ type: 'procedure', 
-	    	    id: $2,
-	    	    arguments: $3,
-	   	        block: $5
-            }];
-	    if($7) $$ = $$.concat($7);
+          $$ = [];
         }
-    ;
+      ;
 
+  block_vars_id
+      : ',' ID block_vars_id
+        {
+          if (symbolTable.vars[$ID]) 
+            throw new Error("Variable "+$ID+" ya definida.");
+          symbolTable.vars[$ID] = { type: "VAR", value: "" }
+          $$ = [{ type: "VAR", value: $2 }];
+          if($3) $$ = $$.concat($3);
+        }
+        | /* empty */
+        {
+          $$ = [];
+        }
+        ;
+
+
+  block_procs
+      : PROCEDURE functionname ';' block ';' block_procs
+        {
+          $$ = [{type: $1, id: $2.id, parameters: $2.parameters, block: $4, symboltable: symbolsToString()}];
+          getFormerScope();
+
+          if($6) $$ = $$.concat($6);
+        }
+      | /* empty */
+        {
+            $$ = [];
+          }
+      ;
+
+  functionname
+    : ID block_procs_parameters
+      {
+        if (symbolTable.vars[$ID]) 
+          throw new Error("Función "+$ID+" ya definido.");
+        symbolTable.vars[$ID] = { type: "PROCEDURE", name: $ID, value: $2.length }; // Contar parámetros en "numparameters"
+        makeNewScope($ID);
+        
+        // Asociar los parámetros al ámbito actual.
+        $2.forEach(function(p) {
+          // Guardar parámetro
+          console.log(p.value);
+          if (symbolTable.vars[p.value]) 
+            throw new Error("Identificador " + p.value + " ya definido.");
+            
+          symbolTable.vars[p.value] = { type: "PARAM", value: "" };
+        });
+
+        $$ = {id: $1, parameters: $2};
+      }
+      ;
+
+  block_procs_parameters
+      : '(' VAR ID block_procs_parameters_ids ')'
+        {
+          $$ = [{type: 'ID', value: $3}].concat($4);
+        }
+      | '(' ')'
+        {
+          $$ = [];
+        }
+      | /* empty */
+        {
+          $$ = [];
+        }
+      ;
+
+  block_procs_parameters_ids
+      : ',' VAR ID block_procs_parameters_ids
+          {
+              $$ = [{type: 'ID', value: $3}].concat($4);
+            }
+        | /* empty */
+          {
+              $$ = [];
+            }
+        ;
 
 statement
     : ID '=' expression
         {
-            buscarDeclaracion($1);
-            IgualarConst($1);
-            IgualarProc($1);
+        var info = findSymbol($ID);
+        var s = info[1];
+        info = info[0];
 
-            $$ = {
-                type: '=',
-                right: $3,
-                left: {type: 'ID', value: $1}
-            };
+        if (info && info.type === "VAR") { 
+          $$ = {type: $2, left: {id: $1, declared_in: symbolTables[s].name }, right: $3};
         }
-    | CALL ID parameters
-        {
-            $$ = { 
-                type: 'call',
-                id: $2,
-                arguments: $3
-            };
+        else if (info && info.type === "PARAM") { //Parametro 
+          $$ = {type: $2, left: {id: $1, declared_in: symbolTables[s].name }, right: $3 /*, declared_in: symbolTables[s].name */}; // ¿?
         }
-    | BEGIN statement anotherstatement END
-        {
-            var stat = [$2];
-            if($3) stat.concat($3);
-            $$ = {
-                type: 'begin',
-                statements: stat
-            };
+        else if (info && info.type === "CONST") { 
+           throw new Error("Symbol "+$ID+" refers to a constant");
         }
+        else if (info && info.type === "PROCEDURE") { 
+           throw new Error("Symbol "+$ID+" refers to a function");
+        }
+        else { 
+           throw new Error("Symbol "+$ID+" not declared");
+        }
+        }
+
+    | CALL ID statement_call_arguments
+      {
+        var info = findSymbol($ID);
+      var s = info[1];
+      info = info[0];
+
+
+      if (info && info.type === "VAR") { 
+        throw new Error("Symbol "+$ID+" refers to a variable");
+      }
+      else if (info && info.type === "PARAM") { //Parametro 
+         throw new Error("Symbol "+$ID+" refers to a parameter");
+      }
+      else if (info && info.type === "CONST") { 
+         throw new Error("Symbol "+$ID+" refers to a constant");
+      }
+      else if (info && info.type === "PROCEDURE" && info.value == $3.length) { 
+         $$ = {type: $1, id: $2, arguments: $3};
+      }
+      else if(info && info.type === "PROCEDURE") {
+        throw new Error("Numero de argumentos invalido para " + $ID + "(" + $3.length + " de " + info.value + ")");
+      }
+      else { 
+         throw new Error("Symbol "+$ID+" not declared");
+      }
+
+      }
+    | BEGIN statement statement_begin_st END
+      {
+        $$ = {type: $1, value: [$2].concat($3)};
+      }
     | IF condition THEN statement
-        {
-            $$ = {
-                type: 'ifthen',
-                condition: $2,
-                statement: $4
-            };
-        }
+      {
+        $$ = {type: $1, condition: $2, statement: $4};
+      }
     | IF condition THEN statement ELSE statement
-        {
-            $$ = {
-                type: 'ifelse',
-                condition: $2,
-                statement_true: $4,
-                statement_false: $6
-            };
-        }
+      {
+        $$ = {type: "IFELSE", condition: $2, statement_true: $4, statement_false: $6};
+      }
     | WHILE condition DO statement
-        {
-            $$ = {
-                type: 'while',
-                condition: $2,
-                statement: $4
-            };
-        }
+      {
+        $$ = {type: $1, condition: $2, statement: $4};
+      }
+    | /* empty */
+      {
+        $$ = [];
+      }
     ;
 
-anotherstatement
-    : /*empty*/
-    | ';' statement anotherstatement
+  statement_call_arguments
+      : '(' ID statement_call_arguments_ids ')'
         {
+          // Comprobar que existe el identificador, y que no sea un id de PROCEDURE
+          var info = findSymbol($ID);
+          var s = info[1];
+          info = info[0];
+
+          if (info && info.type === "PROCEDURE") { 
+            throw new Error("Symbol "+$ID+" refers to a procedure identifier.");
+          }
+          else if(info) {
+            $$ = [{type: 'ID', value: $2}].concat($3);
+          }
+          else { 
+             throw new Error("Symbol "+$ID+" not declared");
+            }
+        }
+      | '(' NUMBER statement_call_arguments_ids ')'
+        {
+          $$ = [{type: 'NUMBER', value: $2}].concat($3);
+        }
+      | '(' ')'
+        {
+          $$ = [];
+        }
+      | /* empty */
+        {
+          $$ = [];
+        }
+      ;
+
+  statement_call_arguments_ids
+      : ',' ID statement_call_arguments_ids
+        {
+          // Comprobar que existe el identificador, y que no sea un id de PROCEDURE
+          var info = findSymbol($ID);
+          var s = info[1];
+          info = info[0];
+
+          if (info && info.type === "PROCEDURE") { 
+            throw new Error("Symbol "+$ID+" refers to a procedure identifier.");
+          }
+          else if(info) {
+            $$ = [{type: 'ID', value: $2}].concat($3);
+          }
+          else { 
+             throw new Error("Symbol "+$ID+" not declared.");
+            }
+        }
+        | ',' NUMBER statement_call_arguments_ids
+        {
+          $$ = [{type: 'NUMBER', value: $2}].concat($3);
+        }
+        | /* empty */
+        {
+          $$ = [];
+        }
+      ;
+
+  statement_begin_st
+      : ';' statement statement_begin_st
+        {
+          // Posibles problemas de compatibilidad con IE < 9
+          aux = $2;
+          if(Object.keys(aux).length == 0)
+            $$ = [];
+          else
             $$ = [$2];
-            if($3) $$ = $$.concat($3);
-        }
-    ;
 
-parameters
-    : /*empty*/
-    | '(' ID anotherparameter ')'
-        {
-            $$ = [{
-                type: 'parameter',
-                right: $2
-            }];
-            if($3) $$.concat($3);
+          if($3) $$ = $$.concat($3)
         }
-    ;
-
-anotherparameter
-    : /*empty*/
-    | ',' ID anotherparameter
+      | /* empty */
         {
-            $$ = [{
-                type: 'parameter',
-                right: $2
-            }];
-            if($3) $$.concat($3);
+          $$ = [];
         }
-    ;
+      ;
 
 condition
-    :ODD expression
-        {
-            $$ = {
-                type: 'ID',
-                exp: $2
-            };
-        }
-    |expression COMPARISON expression
-        {
-            $$ = {
-                type: $2,
-                right: $3,
-                left: $1
-            };
-        }
+    : ODD expression
+      {
+        $$ = {type: $1, value: $2};
+      }
+    | expression COMPARISON expression
+      {
+        $$ = {type: $2, left: $1, right: $3};
+      }
     ;
 
 expression
-    : ID '=' expression
-         {
-            buscarDeclaracion($1);
-            IgualarConst($1);
-            IgualarProc($1);
-            $$ = { type: '=',
-                 left: { type: 'ID', value: $1 },
-                 right: $3 
-            }; 
-         }
-    | expression '+' expression
-        {$$ = {
-                type: '+',
-                left: $1,
-                right: $3
-              };
-        }
+    : expression '+' expression
+      {
+        $$ = {type: $2, left: $1, right: $3};
+      }
     | expression '-' expression
-        {$$ = {
-                type: '-',
-                left: $1,
-                right: $3
-              };
-        }
+      {
+        $$ = {type: $2, left: $1, right: $3};
+      }
     | expression '*' expression
-        {$$ = {
-                type: '*',
-                left: $1,
-                right: $3
-              };
-        }
+      {
+        $$ = {type: $2, left: $1, right: $3};
+      }
     | expression '/' expression
-        {
-          $$ ={
-                type: "/",
-                left: $1,
-                right: $3
-              };
-          }
+      {
+        $$ = {type: $2, left: $1, right: $3};
+      }
     | '-' expression %prec UMINUS
-        {$$ = {
-                type: '-',
-                right: $2
-               };
-        }
-    | '+' expression %prec UMINUS
-        {$$ = {
-                type: '+',
-                right: $2
-               };
-        }
+      {
+        $$ = {type: $1, value: $2};
+      }
     | '(' expression ')'
-        {$$ = $2;}
+      {
+        $$ = $2;
+      }
+    | ID
+    {
+      // Comprobar si existe
+      var info = findSymbol($ID);
+      var s = info[1];
+      info = info[0];
+
+      if (info && info.type === "PROCEDURE")
+        throw new Error("Symbol "+$ID+" refers to a procedure");
+      else if (info)
+      {
+        $$ = { id: $1, declared_in: symbolTables[s].name };
+      }
+      else
+        throw new Error("Symbol "+$ID+" not declared");
+    }
     | NUMBER
-        {$$ = {type: 'NUM', value: Number(yytext)};}
-    | ID 
-        { $$ = {type: 'ID',
-                value: $1
-                }; 
-        }
     ;
