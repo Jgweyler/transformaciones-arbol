@@ -30,4 +30,21 @@ suite('Pruebas', function(){
     obj = transformacion_pl0(pl0.parse("VAR x;x = 5+2*2 ."))
     assert.equal(obj[1].right, "9")
   });
+
+  test('Comparación', function(){
+    obj = transformacion_pl0(pl0.parse("VAR x,y;IF x == 5 THEN y = 2 ."))
+    assert.equal(obj[1].condition.type, "==")
+  });
+
+  test('IF, IFELSE', function(){
+    obj = transformacion_pl0(pl0.parse("VAR x,y;IF x == 5 THEN y = 2."))
+    assert.equal(obj[1].type, "IF")
+
+    obj = transformacion_pl0(pl0.parse("VAR x,y;IF x == 5 THEN y = 2 ELSE y = 3."))
+    assert.equal(obj[1].type, "IFELSE")
+  });
+
+  test('Sintáxis', function(){
+    assert.throws(function() { transformacion_pl0(pl0.parse("x = 5")); }, /Expecting 'Punto'/);
+  });
 });
