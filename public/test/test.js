@@ -21,4 +21,13 @@ suite('Pruebas', function(){
     assert.equal(obj[1].right, "5")
   });
 
+  test('Paréntesis', function(){
+    obj = transformacion_pl0(pl0.parse("VAR x;x = (5+2) * 2 ."))
+    assert.equal(obj[1].right, "14")
+  });
+
+  test('Precedencia', function(){
+    obj = transformacion_pl0(pl0.parse("VAR x;x = 5+2*2 ."))
+    assert.equal(obj[1].right, "9")
+  });
 });
