@@ -40,6 +40,12 @@
     };
         return symbols;
     }
+
+    function reset(){
+      symbolTables = [{name: "Global", father: null, vars: {}}]; //Tabla de simbolos global
+      scope = 0;
+      symbolTable = symbolTables[scope]; //Tabla de simbolos actual
+    }
   
 %}
 
@@ -56,7 +62,7 @@
 
 %% /* language grammar */
 program
-    :block '.' EOF
+    :reset block '.' EOF
       {
         return [{symboltable: symbolsToString()}].concat($2);
       }
@@ -75,6 +81,13 @@ block
         if($4)
           $$ = $$.concat($4);
       }
+    ;
+
+reset
+    : /* empty */
+    {
+      reset();
+    }
     ;
 
   block_const
