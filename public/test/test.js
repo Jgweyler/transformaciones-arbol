@@ -44,7 +44,4 @@ suite('Pruebas', function(){
     assert.equal(obj[1].type, "IFELSE")
   });
 
-  test('Sintáxis', function(){
-    assert.throws(function() { transformacion_pl0(pl0.parse("x = 5")); }, /Expecting 'Punto'/);
-  });
 });
