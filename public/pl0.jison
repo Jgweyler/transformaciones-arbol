@@ -56,7 +56,7 @@
 
 %% /* language grammar */
 program
-    :block DOT EOF
+    :block '.' EOF
       {
         return [{symboltable: symbolsToString()}].concat($2);
       }
